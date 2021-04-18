@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use App\Form\AdminUserType;
+use App\Service\MessageService;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -19,10 +20,12 @@ use Omines\DataTablesBundle\Column\DateTimeColumn;
 class AdminMemberController extends AbstractController
 {
     protected $datatableFactory;
+    private $messageService;
 
-    public function __construct(DataTableFactory $datatableFactory)
+    public function __construct(DataTableFactory $datatableFactory, MessageService $messageService)
     {
         $this->datatableFactory = $datatableFactory;
+        $this->messageService = $messageService;
     }
 
     /**
@@ -89,7 +92,8 @@ class AdminMemberController extends AbstractController
                 $user->setRoles(array('ROLE_SUPER_ADMIN'));
             }
 
-            $user->setRegistred(new \DateTime);
+            //$user->setRegistred(new \DateTime);
+            $this->messageService->createMessage(serialize($user));
 
             $em->persist($user);
             $em->flush();
@@ -105,7 +109,7 @@ class AdminMemberController extends AbstractController
      */
     public function add(Request $request, EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
+        //$this->denyAccessUnlessGranted('ROLE_SUPER_ADMIN');
 
         $user = new User;
         $form = $this->createForm(AdminUserType::class, $user);
@@ -130,10 +134,9 @@ class AdminMemberController extends AbstractController
                 $user->setRoles(array('ROLE_SUPER_ADMIN'));
             }
 
-            $user->setRegistred(new \DateTime);
+            //$user->setRegistred(new \DateTime);
 
-            $em->persist($user);
-            $em->flush();
+            $this->messageService->createMessage($user);
 
             return $this->redirectToRoute('admin_member');
         }
