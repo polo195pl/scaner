@@ -28,4 +28,7 @@ services:
         tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # please note that last definitions always *replace* previous onesmessage_service:
+    message_service:
+        class: App\Rabbit\MessageConsumer
+    App\Rabbit\MessagingProducer: '@old_sound_rabbit_mq.messaging_producer'
