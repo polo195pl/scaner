@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -44,6 +46,16 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      */
     private $lastname;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Scan::class, mappedBy="userId")
+     */
+    private $scans;
+
+    public function __construct()
+    {
+        $this->scans = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -146,6 +158,36 @@ class User implements UserInterface
     public function setLastname(string $lastname): self
     {
         $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Scan[]
+     */
+    public function getScans(): Collection
+    {
+        return $this->scans;
+    }
+
+    public function addScan(Scan $scan): self
+    {
+        if (!$this->scans->contains($scan)) {
+            $this->scans[] = $scan;
+            $scan->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeScan(Scan $scan): self
+    {
+        if ($this->scans->removeElement($scan)) {
+            // set the owning side to null (unless already changed)
+            if ($scan->getUserId() === $this) {
+                $scan->setUserId(null);
+            }
+        }
 
         return $this;
     }
