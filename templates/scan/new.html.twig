@@ -1,0 +1,25 @@
+{% extends "_partials/body.html.twig" %}
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+{% block title %}- New scan{% endblock %}
+{% block breadcrumb_link %}
+    <li class="breadcrumb-item">
+        <a href="{{ path('scan') }}" class="breadcrumb-link">Scan</a>
+    </li>
+{% endblock %}
+{% block content %}
+    <div class='col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12'>
+        <div class='card'>
+            <h5 class='card-header'>New scan</h5>
+            <div class='card-body'>
+                {{ form_start(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/vendor/"webcamjs/webcam.min.js') }}"></script>
+{% endblock %}
