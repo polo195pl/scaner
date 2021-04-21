@@ -5,6 +5,9 @@ namespace App\Controller;
 use App\Entity\Scan;
 use App\Form\ScanType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -20,7 +23,7 @@ class ScanController extends AbstractController
     /**
      * @Route("/scan", name="scan")
      */
-    public function index(DataTableFactory $dataTableFactory): Response
+    public function index(DataTableFactory $dataTableFactory, Request $request): Response
     {
         $table = $dataTableFactory->create([])
             ->add('id', NumberColumn::class, ['label' => '#', 'className' => 'bold', 'searchable' => true])
@@ -28,8 +31,27 @@ class ScanController extends AbstractController
             ->add('firstname', TextColumn::class, ['label' => 'Firstname', 'className' => 'bold', 'searchable' => true])
             ->add('lastname', TextColumn::class, ['label' => 'Lastname', 'className' => 'bold', 'searchable' => true])
             ->add('code', TextColumn::class, ['label' => 'Code', 'className' => 'bold', 'searchable' => true])
-            ->add('actions', TwigColumn::class, ['label' => 'Actions', 'className' => 'bold', 'searchable' => true, 'template' => 'scan/_partials/table/actions.html.twig']);
-
+            ->add('actions', TwigColumn::class, ['label' => 'Actions', 'className' => 'bold', 'searchable' => true, 'template' => 'scan/_partials/table/actions.html.twig'])
+            ->createAdapter(ORMAdapter::class, [
+                'entity' => Scan::class,
+                'hydrate' => Query::HYDRATE_ARRAY,
+                'query' => function(QueryBuilder $builider) {
+                    $builider
+                        ->addSelect('u.firstname')
+                        ->addSelect('u.lastname')
+                        ->addSelect('s.id')
+                        ->addSelect('s.code')
+                        ->addSelect('s.created_at')
+                        ->from(Scan::class, 's')
+                        ->leftJoin(User::class, 'u', Join::WITH, 'u.id = s.userId');
+                }
+            ]);
+            $table->handleRequest($request);
+        
+        
+            if ($table->isCallback()) {
+                return $table->getResponse();
+            }  
         return $this->render('scan/index.html.twig', [
             'controller_name' => 'ScanController',
             'datatble' => $table
