@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\User;
 use App\Form\AdminUserType;
-use App\Service\MessageService;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -20,12 +19,10 @@ use Omines\DataTablesBundle\Column\DateTimeColumn;
 class AdminMemberController extends AbstractController
 {
     protected $datatableFactory;
-    private $messageService;
 
-    public function __construct(DataTableFactory $datatableFactory, MessageService $messageService)
+    public function __construct(DataTableFactory $datatableFactory)
     {
         $this->datatableFactory = $datatableFactory;
-        $this->messageService = $messageService;
     }
 
     /**
@@ -93,10 +90,6 @@ class AdminMemberController extends AbstractController
             }
 
             //$user->setRegistred(new \DateTime);
-            $this->messageService->createMessage(serialize($user));
-
-            $em->persist($user);
-            $em->flush();
         }
 
         return $this->render('admin/index.html.twig', [
@@ -135,7 +128,6 @@ class AdminMemberController extends AbstractController
             }
 
             //$user->setRegistred(new \DateTime);
-
             $this->messageService->createMessage($user);
 
             return $this->redirectToRoute('admin_member');
