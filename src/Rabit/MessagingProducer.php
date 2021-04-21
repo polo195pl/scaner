@@ -1,23 +1,15 @@
 <?php
-
 namespace App\Rabbit;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use OldSound\RabbitMqBundle\RabbitMq\Producer;
+use Doctrine\ORM\EntityManagerInterface;
 
-class MessagingProducer extends Producer
+class MessagingProducer extends \OldSound\RabbitMqBundle\RabbitMq\Producer
 {
-    private $em;
-
-    public function __construct(EntityManagerInterface $em)
-    {
-        $this->em = $em;
-    }
-
     public function publish($msgBody, $routingKey = '', $additionalProperties = array(), ?array $headers = null)
     {
-        $this->em->persist($msgBody);
-        $this->em->flush();
+        $em = new EntityManagerInterface;
+        $em->persist($msgBody);
+        $em->flush();
     }
 }

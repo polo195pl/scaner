@@ -18,7 +18,7 @@ class MessageService
     public function createMessage(User $user): JsonResponse
     {
         $this->messagingProducer->publish($user);
-
-        return new JsonResponse(['msg' => 'Success.']);
+        
+        return new JsonResponse(['status' => 'Sent!']);
     }
 }
