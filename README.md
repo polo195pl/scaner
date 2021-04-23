@@ -3,7 +3,7 @@
 ## Installation
 - git clone https://github.com/polo195pl/scaner.git
 - set up db connection in .env (root folder)
-- set up your connection to rabbitmq in old_sound_rabbit_mq.yaml (config/packages/)
+- set up your connection to rabbitmq in .env
 - composer install
 - php bin/console doctrine:migrations:migrate
 - symfony server:start
