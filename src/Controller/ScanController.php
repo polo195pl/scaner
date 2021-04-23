@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Scan;
+use App\Entity\User;
 use App\Form\ScanType;
-use App\Message\Entity;
 use App\Message\Scan as MessageScan;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
@@ -30,8 +30,8 @@ class ScanController extends AbstractController
         $table = $dataTableFactory->create([])
             ->add('id', NumberColumn::class, ['label' => '#', 'className' => 'bold', 'searchable' => true])
             ->add('created_at', DateTimeColumn::class, ['label' => 'Created at', 'className' => 'bold', 'searchable' => true, 'format' => 'd-m-Y H:i:s'])
-            ->add('firstname', TextColumn::class, ['label' => 'Firstname', 'className' => 'bold', 'searchable' => true])
-            ->add('lastname', TextColumn::class, ['label' => 'Lastname', 'className' => 'bold', 'searchable' => true])
+            ->add('firstname', TextColumn::class, ['label' => 'Firstname', 'className' => 'bold', 'searchable' => true, 'field' => 'u.firstname'])
+            ->add('lastname', TextColumn::class, ['label' => 'Lastname', 'className' => 'bold', 'searchable' => true, 'field' => 'u.lastname'])
             ->add('code', TextColumn::class, ['label' => 'Code', 'className' => 'bold', 'searchable' => true])
             ->add('actions', TwigColumn::class, ['label' => 'Actions', 'className' => 'bold', 'searchable' => true, 'template' => 'scan/_partials/table/actions.html.twig'])
             ->createAdapter(ORMAdapter::class, [
