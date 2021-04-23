@@ -16,7 +16,7 @@ class ScanType extends AbstractType
         $builder
             ->add('code', TextType::class)
             ->add('photo', TextType::class, [
-                'attr' => ['class' => 'd-none hidden']
+                'attr' => ['class' => 'hidden d-none']
             ])
             ->add('save', SubmitType::class, [
                 'attr' => ['class' => 'btn btn-submit']
