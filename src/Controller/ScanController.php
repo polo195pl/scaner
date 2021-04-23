@@ -4,10 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Scan;
 use App\Form\ScanType;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Message\Entity;
+use App\Message\Scan as MessageScan;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -54,24 +56,26 @@ class ScanController extends AbstractController
             }  
         return $this->render('scan/index.html.twig', [
             'controller_name' => 'ScanController',
-            'datatble' => $table
+            'datatable' => $table
         ]);
     }
 
     /**
      * @Route("/scan/new", name="scan_new")
      */
-    public function new(Request $request, EntityManagerInterface $em): Response
+    public function new(Request $request): Response
     {   
         $scan = new Scan;
         $form = $this->createForm(ScanType::class, $scan);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $scan->setUserId($this->getUser());
-            $scan->setCreatedAt(new \DateTime);
-            $em->persist($scan);
-            $em->flush();
+            $userID = $this->getUser()->getId();
+            $createdAt = new \DateTime;
+            $code = $form->get('code')->getData();
+            $photo = $form->get('photo')->getData();
+
+            $this->dispatchMessage(new MessageScan($createdAt, $code, $userID, $photo));
 
             return $this->redirectToRoute('scan_new');
         }
