@@ -11,5 +11,5 @@
 Thats all
 
 ## Requiments
-PHP Socket Extension
-RabbitMQ
+- PHP Socket Extension
+- RabbitMQ
